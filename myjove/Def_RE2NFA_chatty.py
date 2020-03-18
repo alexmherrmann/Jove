@@ -10,7 +10,7 @@
 
 from jove.Def_NFA import mk_nfa
 from lex          import lex
-from yacc         import yacc
+from yacc         idmport yacc
 from jove.StateNameSanitizers import ResetStNum, NxtStateStr
 
 
@@ -94,7 +94,7 @@ precedence = (
 
 def p_expression_plus(t):
     '''expression : expression PLUS catexp'''
-    print("Got a plus token")
+    print(f"Got a plus token for '{t[1]}' and '{t[3]}'")
     t[0] = mk_plus_nfa(t[1], t[3]) # Union of the two NFAs is returned
     
 def mk_plus_nfa(N1, N2):
@@ -123,6 +123,7 @@ def p_expression_plus_id(t):
 
 def p_expression_cat(t):
     '''catexp :  catexp ordyexp'''
+    print(f"Got a cat expression between '{t[1]}' and '{t[2]}'")
     t[0] = mk_cat_nfa(t[1], t[2])
 
 def mk_cat_nfa(N1, N2):
@@ -161,6 +162,7 @@ def p_expression_cat_id(t):
 
 def p_expression_ordy_star(t):
     'ordyexp : ordyexp STAR'
+    print(f"Got a star expression on '{t[1]}'")
     t[0] = mk_star_nfa(t[1])
 
 def mk_star_nfa(N):
@@ -221,6 +223,7 @@ def mk_eps_nfa():
 
 def p_expression_ordy_str(t):
     'ordyexp : STR'
+    print("got a string")
     t[0] = mk_symbol_nfa(t[1])
 
 def mk_symbol_nfa(a):
