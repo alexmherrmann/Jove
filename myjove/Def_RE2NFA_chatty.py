@@ -10,7 +10,7 @@
 
 from jove.Def_NFA import mk_nfa
 from lex          import lex
-from yacc         idmport yacc
+from yacc         import yacc
 from jove.StateNameSanitizers import ResetStNum, NxtStateStr
 
 
