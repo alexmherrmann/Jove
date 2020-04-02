@@ -1,36 +1,13 @@
-
-# coding: utf-8
-
-# # Regular Expressions, conversion to NFA
-# 
-# In this module, we will cover regular expressions by showing how they can be converted to NFA. The scanner and parser for RE to convert them to NFA are the main part of this module.
-# 
-
-# In[1]:
+import sys
+if __name__ == "__main__":
+    sys.path.append(".")
+    sys.path.append("jove")
 
 from jove.Def_NFA import mk_nfa
 from lex          import lex
 from yacc         import yacc
 from jove.StateNameSanitizers import ResetStNum, NxtStateStr
 
-
-# # Parsing regular expressions : ReParse
-# 
-
-# In[2]:
-
-# -----------------------------------------------------------------------------
-# reparseNEW.py
-#
-# Parses regular expressions (without the empty RE case)
-# Produces NFA as output.
-#
-# The NEW signifies that I'm generating NFAs starting from
-# sets of states.
-#
-# Adapted from calc.py that is available from 
-# www.dabeaz.com/ply/example.html
-# -----------------------------------------------------------------------------
 
 
 #-----------------------------------------------------------------
@@ -94,13 +71,13 @@ precedence = (
 
 def p_expression_plus(t):
     '''expression : expression PLUS catexp'''
-    print(f"Got a plus token for '{t[1]}' and '{t[3]}'")
+    print(f"Got a plus token for '{t[1]['Sigma']}' and '{t[3]['Sigma']}'")
     t[0] = mk_plus_nfa(t[1], t[3]) # Union of the two NFAs is returned
     
 def mk_plus_nfa(N1, N2):
     """Given two NFAs, return their union.
     """
-    print("Given the parse of two NFA, making one PLUS-connected NFA")
+    print("\tGiven the parse of two NFA, making one PLUS-connected NFA")
     delta_accum = dict({})
     delta_accum.update(N1["Delta"])
     delta_accum.update(N2["Delta"]) # Simply accumulate the transitions
@@ -123,7 +100,7 @@ def p_expression_plus_id(t):
 
 def p_expression_cat(t):
     '''catexp :  catexp ordyexp'''
-    print(f"Got a cat expression between '{t[1]}' and '{t[2]}'")
+    print(f"Catting '{t[1]['Sigma']}' and '{t[2]['Sigma']}'")
     t[0] = mk_cat_nfa(t[1], t[2])
 
 def mk_cat_nfa(N1, N2):
@@ -162,7 +139,7 @@ def p_expression_cat_id(t):
 
 def p_expression_ordy_star(t):
     'ordyexp : ordyexp STAR'
-    print(f"Got a star expression on '{t[1]}'")
+    print(f"Got a star expression on the expression(s) of '{t[1]['Sigma']}'")
     t[0] = mk_star_nfa(t[1])
 
 def mk_star_nfa(N):
@@ -223,7 +200,7 @@ def mk_eps_nfa():
 
 def p_expression_ordy_str(t):
     'ordyexp : STR'
-    print("got a string")
+    print(f"got a string for {t[1]}")
     t[0] = mk_symbol_nfa(t[1])
 
 def mk_symbol_nfa(a):
@@ -253,9 +230,8 @@ def p_error(t):
 
 # ## RE to NFA code
 
-# In[3]:
-
 def re2nfa(s, stno = 0):
+    print('--- ' + s)
     """Given a string s representing an RE and an optional
        state number stno (default 0), generate an NFA that
        is language equivalent to the RE
@@ -274,15 +250,12 @@ def re2nfa(s, stno = 0):
     #-- for debugging : return dotObj_nfa(myparsednfa, nfaname)
     return myparsednfa
 
-
-# In[4]:
-
 print('''You may use any of these help commands:
 help(re2nfa)
 ''')
 
-
-# In[ ]:
-
-
-
+if __name__ == "__main__":
+    re2nfa('a+b')
+    re2nfa('ab')
+    re2nfa('(a+b)cd*')
+    re2nfa('(a+b)*')
